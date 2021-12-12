@@ -32,64 +32,59 @@ bool collideWithWall(int index, int newX, int newY, int width, int height) {
 
 bool collideWithCircle(int index, int newX, int newY, int width, int height) {
 
-  double x = newX;
-  double y = newY;
   double r = (double)circles[index].getR();
-  // checking 8 points on the circles perimiter
-  // (x,y + r)
-  double length = r * SINP4;
-  std::vector<Point> bounderies = {{x + r, y},      {x + length, y - length},
-                                   {x, y - r},      {x - length, y - length},
-                                   {x - length, y}, {x - length, y + length},
-                                   {x, y + r},      {x + length, y + length}};
-
+  bool collisionMade = false;
   for (int j = index + 1; j < displayNr; j++) {
     int x2 = circles[j].getX();
     int y2 = circles[j].getY();
     int r2 = circles[j].getR();
-    for (auto &point : bounderies) {
-      double distance = r2 * r2 - (point.x - x2) * (point.x - x2) -
-                        (point.y - y2) * (point.y - y2);
 
-      if (distance >= 0) {
+    double cosVal = cos(animationData[j].direction);
+    int newX2 = x2 + cosVal * animationData[j].velocity;
+    double sinVal = sin(animationData[j].direction);
+    int newY2 = y2 + sinVal * animationData[j].velocity;
 
-        auto dir1 = animationData[index].direction;
-        auto dir2 = animationData[j].direction;
+    double distance =
+        sqrt((newX - newX2) * (newX - newX2) + (newY - newY2) * (newY - newY2));
 
-        auto reverseDir1 = dir1 + PI;
-        if (reverseDir1 > 2 * PI) {
-          reverseDir1 -= 2 * PI;
-        }
+    if (distance <= r + r2) {
 
-        auto reverseDir2 = dir2 + PI;
-        if (reverseDir2 > 2 * PI) {
-          reverseDir2 -= 2 * PI;
-        }
+      auto dir1 = animationData[index].direction;
+      auto dir2 = animationData[j].direction;
 
-        // head on collision
-        if (abs(reverseDir1 - dir2) < PI) {
-
-          animationData[index].direction = reverseDir1;
-          animationData[j].direction = reverseDir2;
-
-        } else {
-          // catch up with same direction
-          // the faster one should reverse.
-          if (animationData[index].velocity >= animationData[j].velocity) {
-            animationData[index].direction = reverseDir1;
-          } else {
-            animationData[j].direction = reverseDir2;
-          }
-        }
-
-        return true;
-
-        // I may add side collision later on
+      auto reverseDir1 = dir1 + PI;
+      if (reverseDir1 > 2 * PI) {
+        reverseDir1 -= 2 * PI;
       }
+
+      auto reverseDir2 = dir2 + PI;
+      if (reverseDir2 > 2 * PI) {
+        reverseDir2 -= 2 * PI;
+      }
+
+      // head on collision
+      if (abs(reverseDir1 - dir2) < PI) {
+
+        animationData[index].direction = reverseDir1;
+        animationData[j].direction = reverseDir2;
+
+      } else {
+        // catch up with same direction
+        // the faster one should reverse.
+        if (animationData[index].velocity >= animationData[j].velocity) {
+          animationData[index].direction = reverseDir1;
+        } else {
+          animationData[j].direction = reverseDir2;
+        }
+      }
+
+      collisionMade = true;
+
+      // I may add side collision later on
     }
   }
 
-  return false;
+  return collisionMade;
 }
 
 void updateCircles(int width, int height) {
