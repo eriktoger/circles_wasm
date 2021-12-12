@@ -6,12 +6,15 @@ const init = () => {
   canvas.width = window.innerWidth - 40;
   canvas.height =
     window.innerHeight - header.clientHeight - footer.clientHeight;
+  Module.onRuntimeInitialized = () => {
+    Module.init(canvas.width, canvas.height);
+  };
+
   window.onresize = () => {
     canvas.height =
       window.innerHeight - header.clientHeight - footer.clientHeight;
     canvas.width = window.innerWidth - 40;
   };
-
   canvas.addEventListener("mousedown", (event) => {
     const { left, top } = canvas.getBoundingClientRect();
     Module.changeColor(event.clientX - left, event.clientY - top);

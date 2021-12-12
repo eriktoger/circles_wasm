@@ -1,12 +1,12 @@
 #include "export.h"
 
-int main() {
+void init(int width, int height) {
   srand(time(NULL));
   for (int i = 0; i < MAX_NUM_CIRCLES; i++) {
 
-    int radius = getRand(40) + 10;
-    int x = getRand(1000 - radius) + radius;
-    int y = getRand(1000 - radius) + radius;
+    int radius = getRand(30) + 20;
+    int x = getRand(width - radius) + radius;
+    int y = getRand(height - radius) + radius;
     int cr = getRand(255);
     int cg = getRand(255);
     int cb = getRand(255);
@@ -69,5 +69,5 @@ EMSCRIPTEN_BINDINGS(my_module) {
   emscripten::function("changeColor", &changeColor);
 
   emscripten::function("getCircles", &getCircles);
-  emscripten::function("main", &main);
+  emscripten::function("init", &init);
 }

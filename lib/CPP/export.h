@@ -16,7 +16,7 @@
 
 std::vector<Circle> getCircles(int width, int height);
 
-int main();
+void init(int width, int height);
 
 void increaseCircles();
 
