@@ -9,6 +9,7 @@
 
 #define NUM_CIRCLES 5
 #define PI 3.14159265359
+#define SINP4 0.70710678118
 
 // em++ --bind -o public/CPP/canvas.js lib/canvas.cpp
 
@@ -43,6 +44,11 @@ struct AnimationData {
   AnimationData(double d, double v) : direction(d), velocity(v) {}
 };
 
+struct Point {
+  double x;
+  double y;
+};
+
 std::vector<Circle> circles;
 std::vector<AnimationData> animationData;
 
@@ -56,7 +62,7 @@ int main() {
   srand(time(NULL));
   for (int i = 0; i < NUM_CIRCLES; i++) {
 
-    int radius = getRand(50);
+    int radius = getRand(40) + 10;
     int x = getRand(1000 - radius) + radius;
     int y = getRand(1000 - radius) + radius;
     int cr = getRand(255);
@@ -72,45 +78,117 @@ int main() {
   EM_ASM({ render($0, $1); }, NUM_CIRCLES, 6);
 }
 
-void updateCircles(int width, int height) {
-  for (int i = 0; i < NUM_CIRCLES; i++) {
-    // will it collide with a wall?
+bool collideWithWall(int index, int newX, int newY, int width, int height) {
 
-    int x = circles[i].getX();
-    int y = circles[i].getY();
-    int r = circles[i].getR();
-    double cosVal = cos(animationData[i].direction);
-    int signOfCosVal = cosVal > 0 ? 1 : -1;
+  int r = circles[index].getR();
 
-    int newX = x + cosVal * animationData[i].velocity;
+  // there is a edge case when the circle touches both walls, and my if
+  // statments are in the wrong order
+  if ((newY + r) >= height) { // top
+    circles[index].setY(height - r);
+    circles[index].setX(newX);
+    animationData[index].direction = getDirection(PI, 2 * PI);
+    return true;
+  } else if ((newY - r) <= 0) { // bottom
+    circles[index].setY(r);
+    circles[index].setX(newX);
+    animationData[index].direction = getDirection(0, PI);
+    return true;
+  } else if ((newX + r) >= width) { //  right
+    circles[index].setX(width - r);
+    circles[index].setY(newY);
+    animationData[index].direction = getDirection(PI / 2, 3 * PI / 2);
+    return true;
+  } else if ((newX - r) <= 0) { // left
+    circles[index].setX(r);
+    circles[index].setY(newY);
+    animationData[index].direction = getDirection(0, PI) - PI / 2;
+    return true;
+  }
+  return false;
+}
 
-    double sinVal = sin(animationData[i].direction);
+bool collideWithCircle(int index, int newX, int newY, int width, int height) {
 
-    int newY = y + sinVal * animationData[i].velocity;
+  double x = newX;
+  double y = newY;
+  double r = (double)circles[index].getR();
+  // checking 8 points on the circles perimiter
+  // (x,y + r)
+  double length = r * SINP4;
+  std::vector<Point> bounderies = {{x + r, y},      {x + length, y - length},
+                                   {x, y - r},      {x - length, y - length},
+                                   {x - length, y}, {x - length, y + length},
+                                   {x, y + r},      {x + length, y + length}};
 
-    // there is a edge case when the circle touches both walls, and my if
-    // statments are in the wrong order
-    // printf("%f %f %f \n", animationData[i].direction, sinVal, cosVal);
-    if ((newY + r) >= height) { // top
-      circles[i].setY(height - r);
-      circles[i].setX(newX);
-      animationData[i].direction = getDirection(PI, 2 * PI);
-    } else if ((newY - r) <= 0) { // bottom
-      circles[i].setY(r);
-      circles[i].setX(newX);
-      animationData[i].direction = getDirection(0, PI);
-    } else if ((newX + r) >= width) { //  right
-      circles[i].setX(width - r);
-      circles[i].setY(newY);
-      animationData[i].direction = getDirection(PI / 2, 3 * PI / 2);
-    } else if ((newX - r) <= 0) { // left
-      circles[i].setX(r);
-      circles[i].setY(newY);
-      animationData[i].direction = getDirection(0, PI) - PI / 2;
-    } else {
-      circles[i].setX(newX);
-      circles[i].setY(newY);
+  for (int j = index + 1; j < NUM_CIRCLES; j++) {
+    int x2 = circles[j].getX();
+    int y2 = circles[j].getY();
+    int r2 = circles[j].getR();
+    for (auto &point : bounderies) {
+      double distance = r2 * r2 - (point.x - x2) * (point.x - x2) -
+                        (point.y - y2) * (point.y - y2);
+
+      if (distance >= 0) {
+
+        auto dir1 = animationData[index].direction;
+        auto dir2 = animationData[j].direction;
+
+        auto reverseDir1 = dir1 + PI;
+        if (reverseDir1 > 2 * PI) {
+          reverseDir1 -= 2 * PI;
+        }
+
+        auto reverseDir2 = dir2 + PI;
+        if (reverseDir2 > 2 * PI) {
+          reverseDir2 -= 2 * PI;
+        }
+
+        // head on collision
+        if (abs(reverseDir1 - dir2) < PI) {
+
+          animationData[index].direction = reverseDir1;
+          animationData[j].direction = reverseDir2;
+
+        } else {
+          // catch up with same direction
+          // the faster one should reverse.
+          if (animationData[index].velocity >= animationData[j].velocity) {
+            animationData[index].direction = reverseDir1;
+          } else {
+            animationData[j].direction = reverseDir2;
+          }
+        }
+
+        return true;
+
+        // I may add side collision later on
+      }
     }
+  }
+
+  return false;
+}
+
+void updateCircles(int width, int height) {
+  for (int index = 0; index < NUM_CIRCLES; index++) {
+    double x = (double)circles[index].getX();
+    double y = (double)circles[index].getY();
+    double r = (double)circles[index].getR();
+
+    double cosVal = cos(animationData[index].direction);
+    int newX = x + cosVal * animationData[index].velocity;
+    double sinVal = sin(animationData[index].direction);
+    int newY = y + sinVal * animationData[index].velocity;
+
+    // will it collide with a wall?
+    auto hitWall = collideWithWall(index, newX, newY, width, height);
+    auto hitCircle = collideWithCircle(index, newX, newY, width, height);
+
+    if (!hitWall && !hitCircle) {
+      circles[index].setX(newX);
+      circles[index].setY(newY);
+    };
   }
 }
 
