@@ -10,6 +10,6 @@
     "startC": "USEC=true  node server.js",
     "startCPP": "USEC=false node server.js",
     "buildC": "emcc lib/canvas.c -s WASM=1 -s EXPORTED_FUNCTIONS=\"['_main','_getCircles']\" -o public/C/canvas.js",
-    "buildCPP": "em++ --bind -o public/CPP/canvas.js lib/canvas.cpp"
+    "buildCPP": "./buildCPP.sh "
   }
 }

@@ -1,82 +1,4 @@
-#include <emscripten.h>
-#include <emscripten/bind.h>
-#include <iostream>
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <vector>
-
-#define NUM_CIRCLES 5
-#define PI 3.14159265359
-#define SINP4 0.70710678118
-
-// em++ --bind -o public/CPP/canvas.js lib/canvas.cpp
-
-class Circle {
-public:
-  Circle(int x, int y, int r, int cr, int cg, int cb)
-      : x(x), y(y), r(r), cr(cr), cg(cg), cb(cb) {}
-  Circle() : x(0), y(0), r(0), cr(0), cg(0), cb(0) {}
-
-  void setX(int newX) { x = newX; }
-  void setY(int newY) { y = newY; }
-
-  int getX() const { return x; }
-  int getY() const { return y; }
-  int getR() const { return r; }
-  int getCR() const { return cr; }
-  int getCG() const { return cg; }
-  int getCB() const { return cb; }
-
-private:
-  int x;
-  int y;
-  int r;
-  int cr;
-  int cg;
-  int cb;
-};
-
-struct AnimationData {
-  double direction;
-  double velocity;
-  AnimationData(double d, double v) : direction(d), velocity(v) {}
-};
-
-struct Point {
-  double x;
-  double y;
-};
-
-std::vector<Circle> circles;
-std::vector<AnimationData> animationData;
-
-int getRand(int max) { return rand() % max + 1; }
-
-double getDirection(double start, double end) {
-  return start + ((double)rand() / RAND_MAX) * (end - start);
-}
-
-int main() {
-  srand(time(NULL));
-  for (int i = 0; i < NUM_CIRCLES; i++) {
-
-    int radius = getRand(40) + 10;
-    int x = getRand(1000 - radius) + radius;
-    int y = getRand(1000 - radius) + radius;
-    int cr = getRand(255);
-    int cg = getRand(255);
-    int cb = getRand(255);
-    circles.emplace_back(x, y, radius, cr, cg, cb);
-
-    double direction = getDirection(0, 2 * PI);
-    double velocity = getRand(10) + 1;
-    animationData.emplace_back(direction, velocity);
-  }
-
-  EM_ASM({ render($0, $1); }, NUM_CIRCLES, 6);
-}
+#include "functions.h"
 
 bool collideWithWall(int index, int newX, int newY, int width, int height) {
 
@@ -192,22 +114,8 @@ void updateCircles(int width, int height) {
   }
 }
 
-std::vector<Circle> getCircles(int width, int height) {
+int getRand(int max) { return rand() % max + 1; }
 
-  updateCircles(width, height);
-  return circles;
-}
-
-EMSCRIPTEN_BINDINGS(my_module) {
-  emscripten::class_<Circle>("Circle")
-      .property("x", &Circle::getX)
-      .property("y", &Circle::getY)
-      .property("r", &Circle::getR)
-      .property("cr", &Circle::getCR)
-      .property("cg", &Circle::getCG)
-      .property("cb", &Circle::getCB);
-  emscripten::register_vector<Circle>("vector<Circle>");
-
-  emscripten::function("getCircles", &getCircles);
-  emscripten::function("main", &main);
+double getDirection(double start, double end) {
+  return start + ((double)rand() / RAND_MAX) * (end - start);
 }
