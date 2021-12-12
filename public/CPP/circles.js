@@ -11,6 +11,11 @@ const init = () => {
       window.innerHeight - header.clientHeight - footer.clientHeight;
     canvas.width = window.innerWidth - 40;
   };
+
+  canvas.addEventListener("mousedown", (event) => {
+    const { left, top } = canvas.getBoundingClientRect();
+    Module.changeColor(event.clientX - left, event.clientY - top);
+  });
 };
 
 const render = () => {

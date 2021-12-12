@@ -1,6 +1,8 @@
 #ifndef CLASSES_H
 #define CLASSES_H
 
+#include "helpers.h"
+
 class Circle {
 public:
   Circle(int x, int y, int r, int cr, int cg, int cb)
@@ -9,6 +11,7 @@ public:
 
   void setX(int newX);
   void setY(int newY);
+  void changeColor();
 
   int getX() const;
   int getY() const;

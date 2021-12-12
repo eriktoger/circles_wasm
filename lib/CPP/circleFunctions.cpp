@@ -1,4 +1,4 @@
-#include "functions.h"
+#include "circleFunctions.h"
 
 bool collideWithWall(int index, int newX, int newY, int width, int height) {
 
@@ -9,22 +9,22 @@ bool collideWithWall(int index, int newX, int newY, int width, int height) {
   if ((newY + r) >= height) { // top
     circles[index].setY(height - r);
     circles[index].setX(newX);
-    animationData[index].direction = getDirection(PI, 2 * PI);
+    animationData[index].direction = getRandomDirection(PI, 2 * PI);
     return true;
   } else if ((newY - r) <= 0) { // bottom
     circles[index].setY(r);
     circles[index].setX(newX);
-    animationData[index].direction = getDirection(0, PI);
+    animationData[index].direction = getRandomDirection(0, PI);
     return true;
   } else if ((newX + r) >= width) { //  right
     circles[index].setX(width - r);
     circles[index].setY(newY);
-    animationData[index].direction = getDirection(PI / 2, 3 * PI / 2);
+    animationData[index].direction = getRandomDirection(PI / 2, 3 * PI / 2);
     return true;
   } else if ((newX - r) <= 0) { // left
     circles[index].setX(r);
     circles[index].setY(newY);
-    animationData[index].direction = getDirection(0, PI) - PI / 2;
+    animationData[index].direction = getRandomDirection(0, PI) - PI / 2;
     return true;
   }
   return false;
@@ -112,10 +112,4 @@ void updateCircles(int width, int height) {
       circles[index].setY(newY);
     };
   }
-}
-
-int getRand(int max) { return rand() % max + 1; }
-
-double getDirection(double start, double end) {
-  return start + ((double)rand() / RAND_MAX) * (end - start);
 }
