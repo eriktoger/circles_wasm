@@ -1,0 +1,15 @@
+{
+  "name": "WA_ES",
+  "version": "1.0.0",
+  "main": "server.js",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "scripts": {
+    "startC": "USEC=true  node server.js",
+    "startCPP": "USEC=false node server.js",
+    "buildC": "emcc lib/canvas.c -s WASM=1 -s EXPORTED_FUNCTIONS=\"['_main','_getCircles']\" -o public/C/canvas.js",
+    "buildCPP": "em++ --bind -o public/CPP/canvas.js lib/canvas.cpp"
+  }
+}

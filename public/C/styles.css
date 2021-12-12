@@ -1,0 +1,23 @@
+body {
+  height: 100vh;
+  width: 100vw;
+  background-color: papayawhip;
+  margin: 0;
+  overflow: hidden;
+}
+h1 {
+  margin: auto;
+}
+#main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.info {
+  margin: 20px;
+}
+canvas {
+  flex: 1;
+  margin: 0 20px;
+  border: 2px solid indigo;
+}

@@ -1,0 +1,9 @@
+.vscode 
+node_modules
+
+public/C/canvas.js
+public/C/canvas.wasm
+
+
+public/CPP/canvas.js
+public/CPP/canvas.wasm
