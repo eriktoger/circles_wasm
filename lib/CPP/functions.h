@@ -1,7 +1,7 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
-#include "constants.h"
+#include "globals.h"
 #include <math.h>
 #include <stdlib.h>
 

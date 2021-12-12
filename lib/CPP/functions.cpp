@@ -43,7 +43,7 @@ bool collideWithCircle(int index, int newX, int newY, int width, int height) {
                                    {x - length, y}, {x - length, y + length},
                                    {x, y + r},      {x + length, y + length}};
 
-  for (int j = index + 1; j < NUM_CIRCLES; j++) {
+  for (int j = index + 1; j < displayNr; j++) {
     int x2 = circles[j].getX();
     int y2 = circles[j].getY();
     int r2 = circles[j].getR();
@@ -93,7 +93,7 @@ bool collideWithCircle(int index, int newX, int newY, int width, int height) {
 }
 
 void updateCircles(int width, int height) {
-  for (int index = 0; index < NUM_CIRCLES; index++) {
+  for (int index = 0; index < displayNr; index++) {
     double x = (double)circles[index].getX();
     double y = (double)circles[index].getY();
     double r = (double)circles[index].getR();

@@ -13,8 +13,21 @@ h1 {
   flex-direction: column;
   height: 100%;
 }
+#header {
+  display: flex;
+}
 .info {
+  display: flex;
   margin: 20px;
+}
+.buttons {
+  margin: 20px;
+  display: flex;
+}
+.button {
+  vertical-align: middle;
+  margin: 0 5px;
+  font-size: large;
 }
 canvas {
   flex: 1;

@@ -13,7 +13,7 @@ const init = () => {
   };
 };
 
-const render = (nrOfCircles, circleSize) => {
+const render = () => {
   const canvas = document.getElementById("canvas");
   const context = canvas.getContext("2d");
 
@@ -28,5 +28,9 @@ const render = (nrOfCircles, circleSize) => {
     context.fill();
   }
 
-  window.requestAnimationFrame(() => render(nrOfCircles, circleSize));
+  window.requestAnimationFrame(() => render());
 };
+
+const increaseCircles = () => Module.increaseCircles();
+
+const decreaesCircles = () => Module.decreaseCircles();
