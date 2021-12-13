@@ -7,15 +7,19 @@ bool collideWithWall(int index, int newX, int newY, int width, int height) {
   // there is a edge case when the circle touches both walls, and my if
   // statments are in the wrong order
   if ((newY + r) >= height) { // top
+    circles[index].setY(height - r);
     animationData[index].direction = getRandomDirection(PI, 2 * PI);
     return true;
   } else if ((newY - r) <= 0) { // bottom
+    circles[index].setY(r);
     animationData[index].direction = getRandomDirection(0, PI);
     return true;
   } else if ((newX + r) >= width) { //  right
+    circles[index].setX(width - r);
     animationData[index].direction = getRandomDirection(PI / 2, 3 * PI / 2);
     return true;
   } else if ((newX - r) <= 0) { // left
+    circles[index].setX(r);
     animationData[index].direction = getRandomDirection(0, PI) - PI / 2;
     return true;
   }
@@ -26,7 +30,11 @@ bool collideWithCircle(int index, int newX, int newY, int width, int height) {
 
   double r = (double)circles[index].getR();
   bool collisionMade = false;
-  for (int j = index + 1; j < displayNr; j++) {
+  for (int j = 0; j < displayNr; j++) {
+
+    if (j == index) {
+      continue;
+    }
     int x2 = circles[j].getX();
     int y2 = circles[j].getY();
     int r2 = circles[j].getR();
@@ -42,33 +50,16 @@ bool collideWithCircle(int index, int newX, int newY, int width, int height) {
     if (distance <= r + r2) {
 
       auto dir1 = animationData[index].direction;
-      auto dir2 = animationData[j].direction;
 
       auto reverseDir1 = dir1 + PI;
       if (reverseDir1 > 2 * PI) {
         reverseDir1 -= 2 * PI;
       }
-
-      auto reverseDir2 = dir2 + PI;
-      if (reverseDir2 > 2 * PI) {
-        reverseDir2 -= 2 * PI;
+      double randomDirPart = getRandomDirection(0, PI / 4);
+      if (rand() % 2) {
+        randomDirPart *= -1;
       }
-
-      // head on collision
-      if (abs(reverseDir1 - dir2) < PI) {
-
-        animationData[index].direction = reverseDir1;
-        animationData[j].direction = reverseDir2;
-
-      } else {
-        // catch up with same direction
-        // the faster one should reverse.
-        if (animationData[index].velocity >= animationData[j].velocity) {
-          animationData[index].direction = reverseDir1;
-        } else {
-          animationData[j].direction = reverseDir2;
-        }
-      }
+      animationData[index].direction = reverseDir1 + randomDirPart;
 
       collisionMade = true;
 
