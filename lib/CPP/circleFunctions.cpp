@@ -7,23 +7,15 @@ bool collideWithWall(int index, int newX, int newY, int width, int height) {
   // there is a edge case when the circle touches both walls, and my if
   // statments are in the wrong order
   if ((newY + r) >= height) { // top
-    circles[index].setY(height - r);
-    circles[index].setX(newX);
     animationData[index].direction = getRandomDirection(PI, 2 * PI);
     return true;
   } else if ((newY - r) <= 0) { // bottom
-    circles[index].setY(r);
-    circles[index].setX(newX);
     animationData[index].direction = getRandomDirection(0, PI);
     return true;
   } else if ((newX + r) >= width) { //  right
-    circles[index].setX(width - r);
-    circles[index].setY(newY);
     animationData[index].direction = getRandomDirection(PI / 2, 3 * PI / 2);
     return true;
   } else if ((newX - r) <= 0) { // left
-    circles[index].setX(r);
-    circles[index].setY(newY);
     animationData[index].direction = getRandomDirection(0, PI) - PI / 2;
     return true;
   }
@@ -105,6 +97,6 @@ void updateCircles(int width, int height) {
     if (!hitWall && !hitCircle) {
       circles[index].setX(newX);
       circles[index].setY(newY);
-    };
+    }
   }
 }

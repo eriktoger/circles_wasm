@@ -1,12 +1,12 @@
 #include "export.h"
-
+#include <iostream>
 void init(int width, int height) {
   srand(time(NULL));
   for (int i = 0; i < MAX_NUM_CIRCLES; i++) {
 
     int radius = getRand(30) + 20;
-    int x = getRand(width - radius) + radius;
-    int y = getRand(height - radius) + radius;
+    int x = getRand(width - 2 * radius) + radius;
+    int y = getRand(height - 2 * radius) + radius;
     int cr = getRand(255);
     int cg = getRand(255);
     int cb = getRand(255);
