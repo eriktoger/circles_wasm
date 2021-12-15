@@ -1,8 +1,1 @@
-em++ -c lib/CPP/constants.cpp
-em++ -c lib/CPP/classes.cpp
-em++ -c lib/CPP/globals.cpp
-em++ -c lib/CPP/helpers.cpp
-em++ -c lib/CPP/circleFunctions.cpp
-em++ -c lib/CPP/export.cpp
-em++  --bind constants.o helpers.o globals.o export.o circleFunctions.o classes.o -o public/CPP/canvas.js -s ALLOW_MEMORY_GROWTH=1 
-rm *.o
+em++ --bind lib/CPP/constants.cpp lib/CPP/helpers.cpp lib/CPP/globals.cpp lib/CPP/export.cpp lib/CPP/circleFunctions.cpp lib/CPP/classes.cpp -o public/CPP/canvas.js -s ALLOW_MEMORY_GROWTH=1
